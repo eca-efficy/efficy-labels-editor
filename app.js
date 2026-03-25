@@ -100,7 +100,7 @@ function renderTable() {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = Math.min(totalRows, startIndex + pageSize);
 
-    let html = '<thead><tr><th>#</th><th>Key</th>';
+    let html = '<thead><tr><th>#</th><th data-key-col>Key</th>';
     languages.forEach((lang, j) => { html += `<th data-lang-col="${j}">${escapeHtml(lang)}</th>`; });
     html += '</tr></thead><tbody>';
 
@@ -125,7 +125,9 @@ function renderTable() {
             }
             html += `</td>`;
             html += `<td><input type="text" value="${escapeHtml(row.key)}"
-                     onchange="updateKey(${index}, this.value)"></td>`;
+                     onchange="updateKey(${index}, this.value)"
+                     onfocus="expandColumn('key')"
+                     onblur="collapseColumn()"></td>`;
             for (let j = 0; j < languages.length; j++) {
                 const value = row.values[j] || '';
                 const showTranslate = !value && anthropicApiKey;
@@ -581,17 +583,27 @@ function escapeHtml(text) {
 
 // ── Column expand on focus ───────────────────────────────────────
 
-function expandColumn(langIndex) {
+function expandColumn(colId) {
     clearTimeout(collapseTimeout);
 
+    const keyTh = dataTable.querySelector('th[data-key-col]');
+    if (keyTh) {
+        const active = colId === 'key';
+        keyTh.style.minWidth = active ? '400px' : '';
+        keyTh.classList.toggle('col-active', active);
+    }
+
     dataTable.querySelectorAll('th[data-lang-col]').forEach((th, i) => {
-        th.style.minWidth = (i === langIndex) ? '400px' : '';
-        th.classList.toggle('col-active', i === langIndex);
+        const active = i === colId;
+        th.style.minWidth = active ? '400px' : '';
+        th.classList.toggle('col-active', active);
     });
 }
 
 function collapseColumn() {
     collapseTimeout = setTimeout(() => {
+        const keyTh = dataTable.querySelector('th[data-key-col]');
+        if (keyTh) { keyTh.style.minWidth = ''; keyTh.classList.remove('col-active'); }
         dataTable.querySelectorAll('th[data-lang-col]').forEach(th => {
             th.style.minWidth = '';
             th.classList.remove('col-active');

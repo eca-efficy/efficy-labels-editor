@@ -454,6 +454,14 @@ input[type="text"]:focus, textarea:focus {
     cursor: not-allowed;
 }
 
+/* ── Active column highlight ────────────────────────────────────── */
+
+th.col-active {
+    background: var(--primary-light) !important;
+    color: var(--primary-dark) !important;
+    border-bottom-color: var(--primary) !important;
+}
+
 /* ── Empty cell tint ────────────────────────────────────────────── */
 
 .empty-cell {

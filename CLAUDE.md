@@ -51,3 +51,5 @@ LABEL_KEY	English value	French value	Dutch value
 **Layout:** `.container` uses `height: 100vh` with flexbox so `.table-container` (with `overflow: auto; flex: 1`) fills the remaining viewport. This makes the `<thead>` sticky (`position: sticky; top: 0`) work correctly within the scroll container.
 
 **AI Translation:** Uses the Anthropic Messages API (`claude-haiku-4-5-20251001`) directly from the browser. API key stored in `localStorage`. Per-cell (✨) and per-row (✨) translate buttons appear on empty cells when a key is configured.
+
+**Column expand on focus:** Language column inputs have `onfocus="expandColumn(j)"` / `onblur="collapseColumn()"`. `expandColumn` sets `min-width: 400px` directly on the matching `<th data-lang-col="j">` element; `collapseColumn` clears it after a 150ms debounce (so switching between cells in the same table doesn't cause a visible flash). Note: do **not** use `<col>` width for this — browsers ignore `<col> width` when the table uses `table-layout: auto` with `width: 100%`; only `min-width` on `<th>` reliably forces column expansion.

@@ -6,6 +6,7 @@ let currentPage = 1;
 let pageSize = 50;
 let searchDebounceTimeout = null;
 let anthropicApiKey = localStorage.getItem('anthropicApiKey') || '';
+let collapseTimeout = null;
 
 const fileInput = document.getElementById('fileInput');
 const dataTable = document.getElementById('dataTable');
@@ -100,7 +101,7 @@ function renderTable() {
     const endIndex = Math.min(totalRows, startIndex + pageSize);
 
     let html = '<thead><tr><th>#</th><th>Key</th>';
-    languages.forEach(lang => { html += `<th>${escapeHtml(lang)}</th>`; });
+    languages.forEach((lang, j) => { html += `<th data-lang-col="${j}">${escapeHtml(lang)}</th>`; });
     html += '</tr></thead><tbody>';
 
     for (let i = startIndex; i < endIndex; i++) {
@@ -132,7 +133,9 @@ function renderTable() {
                 html += `<input type="text" value="${escapeHtml(value)}"
                          data-row-index="${index}" data-lang-index="${j}"
                          onchange="updateValue(${index}, ${j}, this.value)"
-                         oninput="handleValueInput(this)">`;
+                         oninput="handleValueInput(this)"
+                         onfocus="expandColumn(${j})"
+                         onblur="collapseColumn()">`;
                 if (showTranslate) {
                     html += `<button class="translate-btn" title="Translate with Claude AI" onclick="translateCell(${index}, ${j}, this)">✨</button>`;
                 }
@@ -574,4 +577,24 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// ── Column expand on focus ───────────────────────────────────────
+
+function expandColumn(langIndex) {
+    clearTimeout(collapseTimeout);
+
+    dataTable.querySelectorAll('th[data-lang-col]').forEach((th, i) => {
+        th.style.minWidth = (i === langIndex) ? '400px' : '';
+        th.classList.toggle('col-active', i === langIndex);
+    });
+}
+
+function collapseColumn() {
+    collapseTimeout = setTimeout(() => {
+        dataTable.querySelectorAll('th[data-lang-col]').forEach(th => {
+            th.style.minWidth = '';
+            th.classList.remove('col-active');
+        });
+    }, 150);
 }

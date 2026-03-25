@@ -39,7 +39,7 @@ body {
 .container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
 }
 
 /* ── Top navbar ─────────────────────────────────────────────────── */
@@ -221,6 +221,7 @@ body {
     box-shadow: 0 0 0 3px rgba(0,178,138,0.12);
 }
 
+
 /* ── Pagination bar ─────────────────────────────────────────────── */
 
 .pagination-bar {
@@ -297,7 +298,7 @@ body {
 .table-container {
     overflow: auto;
     flex: 1;
-    padding: 16px 24px 24px;
+    padding: 8px 16px 16px;
 }
 
 table {
@@ -312,7 +313,7 @@ table {
 }
 
 th, td {
-    padding: 9px 12px;
+    padding: 6px 10px;
     text-align: left;
     border-bottom: 1px solid var(--border);
     min-width: 100px;
@@ -327,21 +328,31 @@ th {
     letter-spacing: 0.04em;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 3;
     border-bottom: 2px solid var(--border-dark);
 }
 
 th:first-child {
     background: #edf2f7;
     color: var(--muted-light);
+    width: 50px;
     min-width: 50px;
     text-align: center;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 5;
 }
 
 th:nth-child(2) {
     background: var(--primary-light);
     color: var(--primary-dark);
     min-width: 150px;
+    position: sticky;
+    top: 0;
+    left: 50px;
+    z-index: 5;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.06);
 }
 
 td:first-child {
@@ -350,12 +361,28 @@ td:first-child {
     font-weight: 600;
     font-size: 11px;
     background: #f7fafc;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+
+td:nth-child(2) {
+    position: sticky;
+    left: 50px;
+    z-index: 2;
+    background: var(--card);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.06);
 }
 
 tr:last-child td { border-bottom: none; }
 
-tr:hover td { background: #f7fafc; }
-tr:hover td:first-child { background: #edf2f7; }
+tbody tr:nth-child(even) td { background: #f8fafb; }
+tbody tr:nth-child(even) td:first-child { background: #eef2f6; }
+tbody tr:nth-child(even) td:nth-child(2) { background: #f8fafb; }
+
+tr:hover td { background: #edf7f4; }
+tr:hover td:first-child { background: #dff0eb; }
+tr:hover td:nth-child(2) { background: #edf7f4; }
 
 .comment-row td {
     background: var(--warning-bg) !important;
@@ -368,7 +395,7 @@ tr:hover td:first-child { background: #edf2f7; }
 
 input[type="text"], textarea {
     width: 100%;
-    padding: 5px 8px;
+    padding: 3px 6px;
     border: 1px solid transparent;
     border-radius: 3px;
     font-family: inherit;
@@ -423,6 +450,44 @@ input[type="text"]:focus, textarea:focus {
 }
 
 .translate-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Empty cell tint ────────────────────────────────────────────── */
+
+.empty-cell {
+    background: #fff8f2 !important;
+}
+
+/* ── Row-level translate button ─────────────────────────────────── */
+
+.row-number-cell {
+    padding: 6px 8px;
+}
+
+.translate-row-btn {
+    display: block;
+    margin: 3px auto 0;
+    flex-shrink: 0;
+    background: none;
+    border: 1px solid var(--primary);
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 1px 5px;
+    font-size: 10px;
+    color: var(--primary);
+    line-height: 1.6;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.translate-row-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.translate-row-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }

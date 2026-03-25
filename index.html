@@ -57,6 +57,26 @@
             <input type="text" id="searchInput" placeholder='🔍 Search in table... (use "quotes" for exact match)' disabled>
         </div>
 
+        <div class="pagination-bar hidden" id="paginationBar">
+            <div class="pagination-info" id="paginationInfo"></div>
+            <div class="pagination-controls">
+                <button class="pg-btn" id="pgFirst" onclick="goToPage(1)" title="First page">«</button>
+                <button class="pg-btn" id="pgPrev"  onclick="goToPage(currentPage - 1)" title="Previous page">‹</button>
+                <button class="pg-btn" id="pgNext"  onclick="goToPage(currentPage + 1)" title="Next page">›</button>
+                <button class="pg-btn" id="pgLast"  onclick="goToLastPage()" title="Last page">»</button>
+            </div>
+            <div class="pagination-size">
+                <label for="pageSizeSelect">Rows per page:</label>
+                <select id="pageSizeSelect" onchange="changePageSize(this.value)">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50" selected>50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                </select>
+            </div>
+        </div>
+
         <!-- API Key Modal -->
         <div id="apiKeyModal" class="modal-overlay hidden">
             <div class="modal">
@@ -94,27 +114,7 @@
             </div>
         </div>
 
-        <div class="pagination-bar hidden" id="paginationBar">
-            <div class="pagination-info" id="paginationInfo"></div>
-            <div class="pagination-controls">
-                <button class="pg-btn" id="pgFirst" onclick="goToPage(1)" title="First page">«</button>
-                <button class="pg-btn" id="pgPrev"  onclick="goToPage(currentPage - 1)" title="Previous page">‹</button>
-                <button class="pg-btn" id="pgNext"  onclick="goToPage(currentPage + 1)" title="Next page">›</button>
-                <button class="pg-btn" id="pgLast"  onclick="goToLastPage()" title="Last page">»</button>
-            </div>
-            <div class="pagination-size">
-                <label for="pageSizeSelect">Rows per page:</label>
-                <select id="pageSizeSelect" onchange="changePageSize(this.value)">
-                    <option value="10">10</option>
-                    <option value="25" selected>25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="200">200</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="table-container">
+<div class="table-container">
             <div class="no-data" id="noData">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

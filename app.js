@@ -3,7 +3,7 @@ let languages = [];
 let rows = [];
 let filteredRows = [];
 let currentPage = 1;
-let pageSize = 25;
+let pageSize = 50;
 let searchDebounceTimeout = null;
 let anthropicApiKey = localStorage.getItem('anthropicApiKey') || '';
 
@@ -98,17 +98,14 @@ function renderTable() {
 
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = Math.min(totalRows, startIndex + pageSize);
-    const pageRows = filteredRows.slice(startIndex, endIndex);
 
     let html = '<thead><tr><th>#</th><th>Key</th>';
-    languages.forEach(lang => {
-        html += `<th>${escapeHtml(lang)}</th>`;
-    });
+    languages.forEach(lang => { html += `<th>${escapeHtml(lang)}</th>`; });
     html += '</tr></thead><tbody>';
 
-    for (let i = 0; i < pageRows.length; i++) {
-        const { row, index } = pageRows[i];
-        const displayLineNumber = startIndex + i + 1;
+    for (let i = startIndex; i < endIndex; i++) {
+        const { row, index } = filteredRows[i];
+        const displayLineNumber = i + 1;
 
         if (row.type === 'comment') {
             html += `<tr class="comment-row" data-index="${index}">`;
@@ -118,15 +115,20 @@ function renderTable() {
                      onchange="updateComment(${index}, this.value)">`;
             html += `</td></tr>`;
         } else if (row.type === 'data') {
+            const hasEmptyCells = languages.some((_, i) => !(row.values[i] || '').trim());
+            const showRowTranslate = hasEmptyCells && anthropicApiKey;
             html += `<tr data-index="${index}">`;
-            html += `<td>${displayLineNumber}</td>`;
+            html += `<td class="row-number-cell"><span>${displayLineNumber}</span>`;
+            if (showRowTranslate) {
+                html += `<button class="translate-row-btn" title="Translate all empty cells with Claude AI" onclick="translateRow(${index}, this)">✨</button>`;
+            }
+            html += `</td>`;
             html += `<td><input type="text" value="${escapeHtml(row.key)}"
                      onchange="updateKey(${index}, this.value)"></td>`;
-
             for (let j = 0; j < languages.length; j++) {
                 const value = row.values[j] || '';
                 const showTranslate = !value && anthropicApiKey;
-                html += `<td><div class="cell-wrapper">`;
+                html += `<td${!value ? ' class="empty-cell"' : ''}><div class="cell-wrapper">`;
                 html += `<input type="text" value="${escapeHtml(value)}"
                          data-row-index="${index}" data-lang-index="${j}"
                          onchange="updateValue(${index}, ${j}, this.value)"
@@ -152,7 +154,7 @@ function renderPagination(totalRows, startIndex, endIndex, totalPages) {
     bar.classList.remove('hidden');
 
     document.getElementById('paginationInfo').innerHTML =
-        `<strong>${endIndex}</strong> / ${totalRows}`;
+        `<strong>${startIndex + 1}–${endIndex}</strong> / ${totalRows}`;
 
     document.getElementById('pgFirst').disabled = currentPage === 1;
     document.getElementById('pgPrev').disabled  = currentPage === 1;
@@ -180,6 +182,16 @@ function changePageSize(val) {
 
 function updateKey(index, newKey) {
     rows[index].key = newKey;
+    if (languages.length > 0 && !(rows[index].values[0] || '').trim()) {
+        rows[index].values[0] = newKey;
+        const enInput = document.querySelector(`#dataTable input[data-row-index="${index}"][data-lang-index="0"]`);
+        if (enInput) {
+            enInput.value = newKey;
+            const td = enInput.closest('td');
+            td?.classList.remove('empty-cell');
+            td?.querySelector('.translate-btn')?.remove();
+        }
+    }
 }
 
 function updateValue(index, langIndex, newValue) {
@@ -198,6 +210,10 @@ function addNewRow() {
     filteredRows = getDataRows();
     goToLastPage();
     updateStats();
+    const tableContainer = document.querySelector('.table-container');
+    if (tableContainer) tableContainer.scrollTop = tableContainer.scrollHeight;
+    const lastRow = document.querySelector('#dataTable tbody tr:last-child');
+    if (lastRow) lastRow.querySelector('td:nth-child(2) input')?.focus();
 }
 
 function addNewComment() {
@@ -477,6 +493,76 @@ Reply with ONLY the translated text — no quotes, no explanation.`
         input.value = translation;
         btn.style.display = 'none';
 
+    } catch (err) {
+        btn.disabled = false;
+        btn.textContent = '✨';
+        alert(`Translation failed: ${err.message}`);
+    }
+}
+
+async function translateRow(rowIndex, btn) {
+    if (!anthropicApiKey) { openApiKeyModal(); return; }
+
+    const row = rows[rowIndex];
+    const emptyLangIndexes = languages
+        .map((_, i) => i)
+        .filter(i => !(row.values[i] || '').trim());
+
+    if (emptyLangIndexes.length === 0) return;
+
+    btn.disabled = true;
+    btn.textContent = '⏳';
+
+    try {
+        for (const langIndex of emptyLangIndexes) {
+            const targetLang = languages[langIndex];
+            const context = languages
+                .map((lang, i) => (row.values[i] || '').trim() ? `${lang}: ${row.values[i]}` : null)
+                .filter(Boolean).join('\n');
+
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': anthropicApiKey,
+                    'anthropic-version': '2023-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
+                },
+                body: JSON.stringify({
+                    model: 'claude-haiku-4-5-20251001',
+                    max_tokens: 256,
+                    messages: [{
+                        role: 'user',
+                        content: `You are a translation assistant for a CRM software UI localization file. The application is Efficy CRM, which manages business entities such as contacts, companies, documents, opportunities, projects, actions, and meetings. Labels are short UI strings (button labels, field names, menu items, tooltips, status messages).
+
+Translate the following label value into ${targetLang}.
+
+Label key: ${row.key}${context ? `\nExisting translations:\n${context}` : ''}
+
+Reply with ONLY the translated text — no quotes, no explanation.`
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.error?.message || `HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            const translation = data.content[0].text.trim();
+
+            updateValue(rowIndex, langIndex, translation);
+
+            const input = document.querySelector(`input[data-row-index="${rowIndex}"][data-lang-index="${langIndex}"]`);
+            if (input) {
+                input.value = translation;
+                const cellBtn = input.parentElement.querySelector('.translate-btn');
+                if (cellBtn) cellBtn.style.display = 'none';
+            }
+        }
+
+        btn.remove();
     } catch (err) {
         btn.disabled = false;
         btn.textContent = '✨';

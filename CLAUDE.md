@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a single-file browser-based tool (`labels-editor.html`) for editing Efficy localization/labels files. No build process, no dependencies, no server — open the HTML file directly in a browser.
+A browser-based tool for editing Efficy localization/labels files. No build process, no dependencies, no server — open `index.html` directly in a browser. Logic lives in `app.js`, styles in `style.css`.
 
 ## File Format
 
@@ -24,21 +24,30 @@ LABEL_KEY	English value	French value	Dutch value
 
 ## Architecture
 
-Everything lives in `labels-editor.html` as a single self-contained file:
-
-**State:**
+**State (app.js globals):**
 - `rows[]` — all parsed rows (type: `header` | `empty` | `comment` | `data`)
 - `filteredRows[]` — subset shown after search filtering (data + comment rows only)
 - `languages[]` — language codes from the header line
-- `virtualScrollOffset` — current scroll position for virtual rendering
+- `currentPage`, `pageSize` — pagination state
+- `anthropicApiKey` — loaded from `localStorage`, used for AI translation
 
 **Key functions:**
 - `parseFile(content)` — splits content into typed row objects
-- `renderTable()` — re-renders the full table using virtual scrolling (renders only visible rows ± `BUFFER_SIZE`)
+- `renderTable()` — renders the current page of `filteredRows` as an HTML table; rebuilds `innerHTML` of `#dataTable`
+- `renderPagination()` — updates the pagination bar UI
 - `buildFileContent()` — serializes `rows[]` back to the tab-separated format
-- `filterTable()` — applies fuzzy or exact search, resets `filteredRows` and re-renders
+- `filterTable()` — applies fuzzy or exact search, resets `filteredRows`, resets to page 1, re-renders
 - `downloadFile()` / `createBackup()` — trigger browser download of the current content
+- `updateKey(index, newKey)` — updates the key of a data row; if the first language cell (EN) is empty, auto-fills it with the key value and removes the translate button from that cell
+- `updateValue(index, langIndex, newValue)` — updates a single translation cell value
+- `handleValueInput(input)` — live input handler that shows/hides the per-cell translate button based on whether the cell is empty
 
-**Virtual scrolling:** The table renders only the rows visible in the viewport plus a buffer of 10 rows above/below. `ROW_HEIGHT = 41px` is a fixed constant used for spacer calculations. On scroll, `handleScroll` updates `virtualScrollOffset` and calls `renderTable()`.
+**Pagination:** Table is paginated (default 50 rows/page). `goToPage()` resets scroll to top. `goToLastPage()` is used after adding rows.
 
-**Search:** Wrapping the term in `"quotes"` triggers exact substring match; otherwise uses fuzzy match (characters must appear in order).
+**Add Row behavior:** `addNewRow()` appends a blank data row, navigates to the last page, scrolls the table container to the bottom, and focuses the Key input of the new row.
+
+**Search:** Wrapping the term in `"quotes"` triggers exact substring match; otherwise uses fuzzy match (characters must appear in order). Debounced at 150ms.
+
+**Layout:** `.container` uses `height: 100vh` with flexbox so `.table-container` (with `overflow: auto; flex: 1`) fills the remaining viewport. This makes the `<thead>` sticky (`position: sticky; top: 0`) work correctly within the scroll container.
+
+**AI Translation:** Uses the Anthropic Messages API (`claude-haiku-4-5-20251001`) directly from the browser. API key stored in `localStorage`. Per-cell (✨) and per-row (✨) translate buttons appear on empty cells when a key is configured.

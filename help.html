@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efficy Labels Editor — Help</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            color: #343a40;
+        }
+
+        .page {
+            max-width: 860px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 28px 40px;
+        }
+
+        .page-header h1 { font-size: 1.6em; margin-bottom: 4px; }
+        .page-header p  { font-size: 0.95em; opacity: 0.85; }
+
+        .toc {
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            padding: 18px 40px;
+        }
+
+        .toc h2 {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .toc ol {
+            padding-left: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 40px;
+            font-size: 14px;
+        }
+
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .toc a:hover { text-decoration: underline; }
+
+        .content {
+            padding: 36px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        section { scroll-margin-top: 20px; }
+
+        section h2 {
+            font-size: 1.15em;
+            color: #495057;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 6px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        section h3 {
+            font-size: 0.95em;
+            font-weight: 700;
+            color: #495057;
+            margin: 16px 0 8px;
+        }
+
+        p, li { font-size: 14px; line-height: 1.75; color: #495057; }
+
+        ul, ol { padding-left: 22px; }
+        li { margin-bottom: 4px; }
+
+        code {
+            background: #f1f3f5;
+            border: 1px solid #dee2e6;
+            border-radius: 3px;
+            padding: 1px 5px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 14px 18px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            line-height: 1.6;
+            color: #343a40;
+        }
+
+        .tip {
+            background: #e8f4fd;
+            border-left: 4px solid #667eea;
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #495057;
+            margin-top: 12px;
+        }
+
+        .tip strong { color: #667eea; }
+
+        .warn {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #856404;
+            margin-top: 12px;
+        }
+
+        .btn-demo {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: default;
+            vertical-align: middle;
+        }
+
+        .btn-primary-demo { background: #667eea; color: white; }
+        .btn-success-demo { background: #28a745; color: white; }
+        .btn-secondary-demo { background: #6c757d; color: white; }
+        .btn-teal-demo { background: #17a2b8; color: white; }
+
+        table.format-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        table.format-table th {
+            background: #667eea;
+            color: white;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        table.format-table td {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        table.format-table tr:nth-child(even) td { background: #f8f9fa; }
+
+        .back-link {
+            padding: 16px 40px;
+            background: #f8f9fa;
+            border-top: 2px solid #e9ecef;
+            font-size: 14px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .page-header, .toc, .content, .back-link { padding-left: 20px; padding-right: 20px; }
+            .toc ol { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <div class="page-header">
+            <h1>📖 Efficy Labels Editor — Help</h1>
+            <p>Everything you need to know to load, edit, and save localization files.</p>
+        </div>
+
+        <nav class="toc">
+            <h2>Contents</h2>
+            <ol>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#file-format">File format</a></li>
+                <li><a href="#loading">Loading a file</a></li>
+                <li><a href="#editing">Editing labels</a></li>
+                <li><a href="#search">Searching</a></li>
+                <li><a href="#pagination">Pagination</a></li>
+                <li><a href="#adding">Adding rows &amp; comments</a></li>
+                <li><a href="#saving">Saving &amp; backup</a></li>
+                <li><a href="#ai">AI translation (optional)</a></li>
+                <li><a href="#deepl">DeepL</a></li>
+            </ol>
+        </nav>
+
+        <div class="content">
+
+            <section id="overview">
+                <h2>1 — Overview</h2>
+                <p>The Efficy Labels Editor is a browser-based tool for editing <code>.txt</code> localization files used by Efficy CRM. It runs entirely in your browser — there is no server, no install, and no internet connection required (except for the optional AI translation feature).</p>
+                <p style="margin-top:10px">Open <code>index.html</code> directly in your browser, load a labels file, edit it, and download the result.</p>
+            </section>
+
+            <section id="file-format">
+                <h2>2 — File format</h2>
+                <p>Label files are UTF-8 encoded <code>.txt</code> files saved with a BOM (<code>\uFEFF</code>). Each line is one of:</p>
+
+                <table class="format-table">
+                    <thead>
+                        <tr><th>Line type</th><th>Example</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Header</td>
+                            <td><code>==> Languages:	EN	FR	NL</code></td>
+                            <td>Declares the language columns; tab-separated after the colon.</td>
+                        </tr>
+                        <tr>
+                            <td>Comment</td>
+                            <td><code>// Section: Contacts</code></td>
+                            <td>Starts with <code>//</code>. Visible and editable in the table.</td>
+                        </tr>
+                        <tr>
+                            <td>Data</td>
+                            <td><code>BTN_SAVE	Save	Enregistrer	Opslaan</code></td>
+                            <td>Tab-separated: key, then one value per language.</td>
+                        </tr>
+                        <tr>
+                            <td>Empty</td>
+                            <td><em>(blank line)</em></td>
+                            <td>Preserved as-is for readability; not shown in the table.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="tip">
+                    <strong>Tip:</strong> The tool saves files with a UTF-8 BOM so they open correctly in Excel and legacy tools that expect it.
+                </div>
+            </section>
+
+            <section id="loading">
+                <h2>3 — Loading a file</h2>
+                <p>Click <span class="btn-demo btn-primary-demo">📁 Load File</span> and pick a <code>.txt</code> labels file from your computer. The file is read entirely in the browser — nothing is uploaded anywhere.</p>
+                <p style="margin-top:10px">Once loaded, the filename is shown in the toolbar and all editing controls become active.</p>
+            </section>
+
+            <section id="editing">
+                <h2>4 — Editing labels</h2>
+                <p>Every cell in the table is directly editable:</p>
+                <ul>
+                    <li><strong>Key column</strong> — the label identifier (e.g. <code>BTN_SAVE</code>). Changes are reflected immediately in the in-memory data.</li>
+                    <li><strong>Language columns</strong> — one column per language declared in the header. Edit any value in-place.</li>
+                    <li><strong>Comment rows</strong> — shown with a yellow background. The whole row is one editable text field.</li>
+                </ul>
+                <div class="tip">
+                    <strong>Tip:</strong> Changes are held in memory only. Use <strong>Save &amp; Download</strong> or <strong>Backup</strong> to persist them.
+                </div>
+            </section>
+
+            <section id="search">
+                <h2>5 — Searching</h2>
+                <p>Use the search bar below the toolbar to filter the table. Two modes are supported:</p>
+
+                <h3>Fuzzy match (default)</h3>
+                <p>Characters must appear in order but not necessarily consecutively. For example, <code>svcont</code> matches <code>SAVE_CONTACT</code>.</p>
+
+                <h3>Exact match</h3>
+                <p>Wrap your term in double quotes: <code>"save contact"</code>. The table will only show rows where the search term appears as a contiguous substring (case-insensitive).</p>
+
+                <p style="margin-top:10px">The search looks across the key, all language values, and comment text simultaneously. The row counter in the toolbar updates to show <em>matching / total</em>.</p>
+
+                <div class="tip">
+                    <strong>Tip:</strong> Clearing the search box instantly restores the full list.
+                </div>
+            </section>
+
+            <section id="pagination">
+                <h2>6 — Pagination</h2>
+                <p>The pagination bar sits between the search bar and the table. It shows:</p>
+                <ul>
+                    <li><strong>X / Total</strong> — rows shown on the current page vs. total matching rows.</li>
+                    <li><strong>« ‹ › »</strong> — navigate to first, previous, next, last page. Buttons grey out at boundaries.</li>
+                    <li><strong>Rows per page</strong> — choose 10, 25, 50, 100, or 200. Default is 25. Changing this resets to page 1.</li>
+                </ul>
+            </section>
+
+            <section id="adding">
+                <h2>7 — Adding rows &amp; comments</h2>
+
+                <h3>➕ Add Row</h3>
+                <p>Appends a new empty data row at the end of the file. The table automatically jumps to the last page so the new row is visible. Fill in the key and values, then save.</p>
+
+                <h3>💬 Add Comment</h3>
+                <p>Appends a new comment line (<code>// </code>) at the end. Useful for grouping related labels by section. The comment is editable directly in the table.</p>
+            </section>
+
+            <section id="saving">
+                <h2>8 — Saving &amp; backup</h2>
+
+                <h3><span class="btn-demo btn-success-demo">💾 Save &amp; Download</span></h3>
+                <p>Downloads the current state of the file under its original filename. The file is serialized back to the tab-separated format with a UTF-8 BOM.</p>
+
+                <h3><span class="btn-demo btn-secondary-demo">🗄️ Backup</span></h3>
+                <p>Downloads a copy with an auto-generated timestamped name, e.g. <code>efficy_labels_bkp_20260325143022.txt</code>. Use this before making large edits.</p>
+
+                <div class="warn">
+                    <strong>Important:</strong> The browser does not auto-save. If you close the tab without downloading, your changes are lost.
+                </div>
+            </section>
+
+            <section id="ai">
+                <h2>9 — AI translation (optional)</h2>
+                <p>The <span class="btn-demo btn-teal-demo">✨ AI Translate ✓</span> button lets you translate individual empty cells using Claude (Anthropic's AI). This feature is entirely optional and requires an Anthropic API key.</p>
+
+                <h3>Setting up your API key</h3>
+                <p>Click <strong>✨ AI Translate</strong> to open the key management modal. You have two ways to get a key:</p>
+                <ol>
+                    <li>
+                        <strong>Claude Code CLI shortcut</strong> — if you have Claude Code installed, your key is already saved locally at:<br>
+                        <code>%USERPROFILE%\.claude\config.json</code> → copy the value of <code>primaryApiKey</code>.
+                    </li>
+                    <li>
+                        <strong>Anthropic console</strong> — go to <code>console.anthropic.com</code> → <strong>Settings</strong> → <strong>API Keys</strong> → <strong>Create Key</strong>.
+                    </li>
+                </ol>
+                <p style="margin-top:10px">The key is saved in your browser's <code>localStorage</code> and is never sent anywhere except directly to <code>api.anthropic.com</code>.</p>
+
+                <h3>Using translate buttons</h3>
+                <p>Once a key is configured, a <strong>✨</strong> button appears next to every empty language cell. Click it to auto-translate based on the label key and any existing translations for context. The model used is <code>claude-haiku-4-5</code> (fast and cost-effective).</p>
+                <p style="margin-top:10px">If you manually clear a cell that previously had a value, the ✨ button will appear automatically.</p>
+
+                <h3>Removing the key</h3>
+                <p>Re-open the modal and click <strong>Remove key</strong>. The key is deleted from <code>localStorage</code> immediately.</p>
+            </section>
+
+            <section id="deepl">
+                <h2>10 — DeepL</h2>
+                <p>The <span class="btn-demo btn-secondary-demo">🌐 DeepL</span> button simply opens <code>deepl.com/translator</code> in a new tab as a quick reference for manual translations. No data is sent automatically.</p>
+            </section>
+
+        </div>
+
+        <div class="back-link">
+            ← <a href="index.html">Back to the editor</a>
+        </div>
+
+    </div>
+</body>
+</html>

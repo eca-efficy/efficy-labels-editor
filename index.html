@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efficy Labels Editor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Efficy Labels Editor</h1>
+        </div>
+
+        <div class="controls">
+            <div class="file-input-wrapper">
+                <label for="fileInput" class="btn btn-primary">
+                    📁 Load File
+                </label>
+                <input type="file" id="fileInput" accept=".txt">
+            </div>
+            <button id="saveBtn" class="btn btn-success" disabled>
+                💾 Save & Download
+            </button>
+            <button id="backupBtn" class="btn btn-secondary" disabled>
+                🗄️ Backup
+            </button>
+            <button id="addRowBtn" class="btn btn-secondary" disabled>
+                ➕ Add Row
+            </button>
+            <button id="addCommentBtn" class="btn btn-secondary" disabled>
+                💬 Add Comment
+            </button>
+            <button id="deeplBtn" class="btn btn-secondary" disabled>
+                🌐 DeepL
+            </button>
+            <button id="apiKeyBtn" class="btn btn-secondary" onclick="openApiKeyModal()">
+                ✨ AI Translate
+            </button>
+            <a href="help.html" target="_blank" class="btn btn-secondary" style="text-decoration:none;">
+                ❓ Help
+            </a>
+            <div class="filename-display hidden" id="filenameDisplay"></div>
+            <div class="stats">
+                <div class="stat-item">
+                    <span>📊 Rows:</span>
+                    <span class="stat-value" id="rowCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>🌍 Languages:</span>
+                    <span class="stat-value" id="langCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder='🔍 Search in table... (use "quotes" for exact match)' disabled>
+        </div>
+
+        <!-- API Key Modal -->
+        <div id="apiKeyModal" class="modal-overlay hidden">
+            <div class="modal">
+                <h2>✨ AI Translate <span style="font-size:0.75em;font-weight:400;color:#6c757d;"></span></h2>
+
+                <div class="modal-section">
+                    <h3>How to get your API key</h3>
+                    <p style="margin-bottom:8px">If you use <strong>Claude Code CLI</strong>, your key is already stored locally:</p>
+                    <ul>
+                        <li>Open <code>%USERPROFILE%\.claude\config.json</code></li>
+                        <li>Copy the value of <code>primaryApiKey</code></li>
+                    </ul>
+                    <p style="margin: 10px 0 8px">Otherwise, generate one from the Anthropic console:</p>
+                    <ol>
+                        <li>Go to <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> and sign in</li>
+                        <li>Click <strong>Settings</strong> (gear icon, bottom-left) → <strong>API Keys</strong> tab</li>
+                        <li>Click <strong>Create Key</strong>, give it a name, then copy it</li>
+                    </ol>
+                </div>
+
+                <div class="modal-privacy">
+                    🔒 <strong>Privacy:</strong> Your API key is saved exclusively in your browser's <code>localStorage</code> and is only ever sent directly to <strong>api.anthropic.com</strong> to perform translations. It is never shared, logged, or used for any purpose outside this tool.
+                </div>
+
+                <div class="modal-input-row">
+                    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false">
+                    <button onclick="toggleApiKeyVisibility()" title="Show/hide key">👁</button>
+                </div>
+
+                <div class="modal-actions">
+                    <button id="clearKeyBtn" class="btn btn-danger hidden" onclick="clearApiKey()">Remove key</button>
+                    <button class="btn btn-secondary" onclick="closeApiKeyModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveApiKey()">Save key</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination-bar hidden" id="paginationBar">
+            <div class="pagination-info" id="paginationInfo"></div>
+            <div class="pagination-controls">
+                <button class="pg-btn" id="pgFirst" onclick="goToPage(1)" title="First page">«</button>
+                <button class="pg-btn" id="pgPrev"  onclick="goToPage(currentPage - 1)" title="Previous page">‹</button>
+                <button class="pg-btn" id="pgNext"  onclick="goToPage(currentPage + 1)" title="Next page">›</button>
+                <button class="pg-btn" id="pgLast"  onclick="goToLastPage()" title="Last page">»</button>
+            </div>
+            <div class="pagination-size">
+                <label for="pageSizeSelect">Rows per page:</label>
+                <select id="pageSizeSelect" onchange="changePageSize(this.value)">
+                    <option value="10">10</option>
+                    <option value="25" selected>25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="no-data" id="noData">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3>No file loaded</h3>
+                <p>Click "Load File" to begin editing your labels file</p>
+            </div>
+            <table id="dataTable" class="hidden"></table>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

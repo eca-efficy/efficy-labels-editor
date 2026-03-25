@@ -8,7 +8,7 @@ No install, no server, no dependencies — open `index.html` and go.
 - Load / edit / save label files directly in the browser
 - Search with fuzzy or exact match
 - Add rows and comment lines
-- Optional AI translation via Anthropic API (per-cell, uses claude-haiku)
+- Optional AI translation via Anthropic API (per-cell or full line translation, uses claude-haiku)
 - Backup with auto-generated timestamp
 
 ## Usage

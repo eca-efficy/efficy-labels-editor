@@ -1,5 +1,4 @@
 # efficy-labels-editor
-
 Browser-based tool to edit Efficy CRM localization files (`.txt`, tab-separated, UTF-8 BOM).
 
 No install, no server, no dependencies — open `index.html` and go.

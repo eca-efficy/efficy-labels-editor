@@ -113,7 +113,8 @@ function renderTable() {
             html += `<td>${displayLineNumber}</td>`;
             html += `<td colspan="${languages.length + 1}">`;
             html += `<input type="text" value="${escapeHtml(row.content)}"
-                     onchange="updateComment(${index}, this.value)">`;
+                     onchange="updateComment(${index}, this.value)"
+                     onblur="deleteRowIfEmpty(${index})">`;
             html += `</td></tr>`;
         } else if (row.type === 'data') {
             const hasEmptyCells = languages.some((_, i) => !(row.values[i] || '').trim());
@@ -127,7 +128,7 @@ function renderTable() {
             html += `<td><input type="text" value="${escapeHtml(row.key)}"
                      onchange="updateKey(${index}, this.value)"
                      onfocus="expandColumn('key')"
-                     onblur="collapseColumn()"></td>`;
+                     onblur="collapseColumn(); deleteRowIfEmpty(${index})"></td>`;
             for (let j = 0; j < languages.length; j++) {
                 const value = row.values[j] || '';
                 const showTranslate = !value && anthropicApiKey;
@@ -210,6 +211,19 @@ function updateComment(index, newComment) {
     rows[index].content = newComment;
 }
 
+function deleteRowIfEmpty(index) {
+    const row = rows[index];
+    if (!row) return;
+    const isEmpty = row.type === 'data'
+        ? !row.key.trim()
+        : !row.content.replace(/^\/\/\s*/, '').trim();
+    if (!isEmpty) return;
+    rows.splice(index, 1);
+    filteredRows = getDataRows();
+    renderTable();
+    updateStats();
+}
+
 function addNewRow() {
     rows.push({ type: 'data', key: '', values: new Array(languages.length).fill('') });
     filteredRows = getDataRows();
@@ -226,6 +240,14 @@ function addNewComment() {
     filteredRows = getDataRows();
     goToLastPage();
     updateStats();
+    const tableContainer = document.querySelector('.table-container');
+    if (tableContainer) tableContainer.scrollTop = tableContainer.scrollHeight;
+    const lastRow = document.querySelector('#dataTable tbody tr:last-child');
+    const input = lastRow?.querySelector('input');
+    if (input) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+    }
 }
 
 function buildFileContent() {

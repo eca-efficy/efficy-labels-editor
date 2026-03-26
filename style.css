@@ -26,10 +26,14 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: var(--bg);
-    min-height: 100vh;
     color: var(--text);
     font-size: 14px;
 }
@@ -298,7 +302,8 @@ body {
 .table-container {
     overflow: auto;
     flex: 1;
-    padding: 8px 16px 16px;
+    min-height: 0;
+    padding: 0 16px 16px;
 }
 
 table {
@@ -330,6 +335,7 @@ th {
     top: 0;
     z-index: 3;
     border-bottom: 2px solid var(--border-dark);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
 th:first-child {
